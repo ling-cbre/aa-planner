@@ -71,6 +71,7 @@ const prizes = [
 
 const OOPSIES_ITEMS = [
   { key: 'grumpy', icon: '🗣️', title: 'Screaming / Being Grumpy', penalty: 1 },
+  { key: 'bad-word', icon: '🤬', title: 'Saying a Bad Word', penalty: 1 },
   { key: 'dragging-feet', icon: '🐢', title: 'Dragging Your Feet', penalty: 1 },
   { key: 'late-bed', icon: '🌙', title: 'Going to Bed Late', penalty: 1 },
   { key: 'teeth', icon: '🪥', title: 'Not Brushing Teeth', penalty: 1 },
