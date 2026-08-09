@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AA planner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="logo"><span class="logo-pink">Aurora</span> <span class="logo-blue">Anderson</span></div>
+    <div class="score-area">
+      <span id="star-display">⭐ Stars: 0</span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn" id="tab-chores" data-page="chore">✅ Planner</button>
+    <button class="tab-btn" id="tab-prizes" data-page="prize">🎁 Rewards</button>
+    <button class="tab-btn" id="tab-penalties" data-page="penalty">⚠️ Oopsies</button>
+    <button class="tab-btn" id="tab-dashboard" data-page="dashboard">📊 Dashboard</button>
+    <button class="tab-btn" id="tab-report" data-page="report">📊 Summary</button>
+  </nav>
+
+  <!-- CHORE PAGE -->
+  <div id="chore-page">
+    <main>
+      <div class="intro">
+        <h1>Complete Your Planner, Earn a Star! ⭐</h1>
+      </div>
+      <section class="planner-shell" aria-label="Weekly planner">
+        <div class="planner-toolbar">
+          <div class="planner-heading">
+            <h2>Monday to Sunday Planner ✨🎈</h2>
+            <p>See every planner item clearly organized into daily, weekly, and calendar views.</p>
+          </div>
+          <div class="planner-controls">
+            <div class="planner-view-switch" role="tablist" aria-label="Planner views">
+              <button class="planner-view-btn active" data-view="daily" type="button">Daily</button>
+              <button class="planner-view-btn" data-view="weekly" type="button">Weekly</button>
+              <button class="planner-view-btn" data-view="calendar" type="button">Calendar</button>
+            </div>
+          </div>
+        </div>
+        <div class="planner-week-range" id="planner-week-range"></div>
+        <div class="planner-week-strip-row" aria-label="Week navigation">
+          <button class="week-nav-btn" id="prev-week-btn" type="button" aria-label="Previous week">←</button>
+          <div class="planner-week-strip" id="weekday-strip" aria-label="Days of the week"></div>
+          <button class="week-nav-btn" id="next-week-btn" type="button" aria-label="Next week">→</button>
+        </div>
+        <div class="cards-grid planner-grid" id="cards-grid"></div>
+      </section>
+      <!-- 5-star unlock toast area -->
+      <div class="milestone-bar" id="milestone-bar" style="display:none;">
+        <p>🎉 <strong id="milestone-child-name">Aurora</strong> has <strong id="milestone-child-stars">5</strong> stars! What do you want to do?</p>
+        <div class="reward-child-switch" id="milestone-child-switch"></div>
+        <div class="milestone-btns">
+          <button id="spend-now-btn">🎁 Spend Now (5 ⭐)</button>
+          <button id="save-stars-btn">💾 Save for Big Prize</button>
+        </div>
+      </div>
+      <div class="congrats" id="congrats" style="display:none;">
+        <h2>🎉 Amazing job! You completed all your planner items!</h2>
+        <p>You earned <span id="final-stars"></span> stars! Go check your prizes! 🎁</p>
+        <button id="go-prizes-btn">See My Rewards 🎁</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- REWARDS PAGE -->
+  <div id="prize-page" style="display:none;">
+    <div id="congrats-splash" style="display:none;">
+      <div id="congrats-text">🎉 Congratulations! 🎉</div>
+    </div>
+    <div id="confetti-container"></div>
+    <main>
+      <div class="intro">
+        <h1>🎁 Rewards Shop</h1>
+        <p>Choose a child, spend stars on a reward, or save stars for big rewards with different costs.</p>
+        <div class="reward-child-switch reward-child-switch-prominent" id="prize-child-switch"></div>
+      </div>
+
+      <section class="reward-section">
+        <div class="reward-section-head">
+          <h2>Rewards</h2>
+        </div>
+        <div class="prize-grid" id="prize-grid"></div>
+      </section>
+
+      <section class="reward-section">
+        <div class="reward-section-head">
+          <h2>Big Rewards</h2>
+          <p>Big rewards use saved stars and each one can have a different cost.</p>
+        </div>
+        <div class="prize-grid" id="big-prize-grid"></div>
+      </section>
+
+      <div id="prize-claimed-banner" style="display:none;">
+        <div class="prize-banner-inner">
+          <span id="prize-banner-icon"></span>
+          <p>🎉 <strong id="prize-banner-child-name">Aurora</strong> claimed: <strong id="prize-banner-name"></strong>!</p>
+          <p>Go tell a grown-up to make it happen! 😄</p>
+          <button id="prize-banner-close">Awesome! ✨</button>
+        </div>
+      </div>
+      <div id="big-prize-claimed-banner" style="display:none;">
+        <div class="prize-banner-inner big-banner">
+          <span id="big-prize-banner-icon"></span>
+          <p>👑 WOW! <strong id="big-prize-banner-child-name">Aurora</strong> claimed: <strong id="big-prize-banner-name"></strong>!</p>
+          <p>You worked SO hard for this — go tell a grown-up! 🥳</p>
+          <button id="big-prize-banner-close">Let's Go! 🎉</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- OOPSIES PAGE -->
+  <div id="penalty-page" style="display:none;">
+    <main>
+      <div class="intro">
+        <h1>⚠️ Oopsies</h1>
+        <p>Use Oopsies to take away stars when mistakes happen.</p>
+      </div>
+
+      <section class="penalty-shell">
+        <div class="planner-week-range" id="penalty-week-range"></div>
+        <div class="planner-week-strip-row" aria-label="Week navigation">
+          <button class="week-nav-btn" id="penalty-prev-week-btn" type="button" aria-label="Previous week">←</button>
+          <div class="planner-week-strip" id="penalty-weekday-strip" aria-label="Days of the week"></div>
+          <button class="week-nav-btn" id="penalty-next-week-btn" type="button" aria-label="Next week">→</button>
+        </div>
+        <div class="reward-child-switch" id="penalty-child-switch"></div>
+
+        <div class="cards-grid planner-grid view-weekly penalty-grid" id="penalty-grid"></div>
+
+        <div class="penalty-result" id="penalty-result">Choose an Oopsies item to remove stars.</div>
+      </section>
+    </main>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="dashboard-page" style="display:none;">
+    <main>
+      <div class="intro">
+        <h1>📊 Points Dashboard</h1>
+        <p>Track how many stars Aurora and Anderson have earned over time!</p>
+      </div>
+
+      <div class="dashboard-stats">
+        <div class="stat-card child-stat-card aurora-card">
+          <div class="stat-label">Aurora</div>
+          <div class="child-stat-metrics">
+            <div class="child-stat-metric">
+              <span>This Week</span>
+              <strong id="dash-aurora-week-total">0</strong>
+            </div>
+            <div class="child-stat-metric">
+              <span>Week Oopsies</span>
+              <strong id="dash-aurora-week-oopsies">0</strong>
+            </div>
+            <div class="child-stat-metric">
+              <span>All-Time Total</span>
+              <strong id="dash-aurora-alltime-total">0</strong>
+            </div>
+            <div class="child-stat-metric">
+              <span>Current Balance</span>
+              <strong id="dash-aurora-current-balance">0</strong>
+            </div>
+          </div>
+          <div class="stat-sub">⭐ earned + 💾 saved - ⚠️ oopsies</div>
+        </div>
+
+        <div class="stat-card child-stat-card anderson-card">
+          <div class="stat-label">Anderson</div>
+          <div class="child-stat-metrics">
+            <div class="child-stat-metric">
+              <span>This Week</span>
+              <strong id="dash-anderson-week-total">0</strong>
+            </div>
+            <div class="child-stat-metric">
+              <span>Week Oopsies</span>
+              <strong id="dash-anderson-week-oopsies">0</strong>
+            </div>
+            <div class="child-stat-metric">
+              <span>All-Time Total</span>
+              <strong id="dash-anderson-alltime-total">0</strong>
+            </div>
+            <div class="child-stat-metric">
+              <span>Current Balance</span>
+              <strong id="dash-anderson-current-balance">0</strong>
+            </div>
+          </div>
+          <div class="stat-sub">⭐ earned + 💾 saved - ⚠️ oopsies</div>
+        </div>
+      </div>
+
+      <div class="dashboard-charts">
+        <section class="chart-card">
+          <div class="chart-head">
+            <h2>Daily Stars Chart</h2>
+            <p>Compare how many stars Aurora and Anderson earned each day this week.</p>
+          </div>
+          <div class="bar-chart-legend" aria-label="Daily star chart legend">
+            <span class="bar-legend-item"><span class="bar-legend-swatch aurora"></span>Aurora ⭐</span>
+            <span class="bar-legend-item"><span class="bar-legend-swatch anderson"></span>Anderson ⭐</span>
+            <span class="bar-legend-item" style="margin-left: 1.5rem;"><span style="display:inline-block;width:12px;height:12px;background:#ff6b6b;border-radius:2px;vertical-align:middle;"></span> Oopsies</span>
+          </div>
+          <div id="weekly-bar-chart" class="bar-chart grouped-bar-chart" aria-label="Daily stars chart"></div>
+        </section>
+
+        <section class="chart-card">
+          <div class="chart-head">
+            <h2>Weekly Pie Chart</h2>
+            <p>See how this week's stars are split between Aurora and Anderson.</p>
+          </div>
+          <div class="pie-chart-layout">
+            <div class="pie-chart-wrap">
+              <div id="weekly-pie-chart" class="pie-chart" aria-label="Weekly stars pie chart">
+                <div class="pie-chart-center">
+                  <span id="weekly-pie-total">0</span>
+                  <small>This week</small>
+                </div>
+              </div>
+            </div>
+            <ul id="weekly-pie-legend" class="pie-legend"></ul>
+          </div>
+        </section>
+      </div>
+
+      <div class="dashboard-history">
+        <h2>Weekly History</h2>
+        <table id="weekly-history-table">
+          <thead>
+            <tr><th>Week Of</th><th>Aurora</th><th>Anderson</th><th>Total</th></tr>
+          </thead>
+          <tbody id="weekly-history-body"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- REPORT PAGE -->
+  <div id="report-page" style="display:none;">
+    <main>
+      <div class="intro">
+        <h1>🎁 Reward Claims History</h1>
+        <p>See all rewards claimed by Aurora and Anderson with dates and cost.</p>
+      </div>
+
+      <section class="report-section">
+        <div class="report-header">
+          <h2>Claimed Rewards</h2>
+        </div>
+        <div class="report-table-wrapper">
+          <table id="reward-claims-table" class="report-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Child</th>
+                <th>Reward</th>
+                <th>Starting Points</th>
+                <th>Cost</th>
+                <th>Ending Points</th>
+              </tr>
+            </thead>
+            <tbody id="reward-claims-body"></tbody>
+          </table>
+          <div id="report-empty" class="report-empty" style="display:none;">
+            <p>No reward claims yet.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>Keep up the great work! 🌟</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
