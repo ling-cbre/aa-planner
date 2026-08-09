@@ -589,6 +589,18 @@ main {
   color: white;
 }
 
+.child-toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #ede5f5;
+  border-color: rgba(108, 52, 131, 0.1);
+  color: #b8a8c8;
+}
+
+.chore-card.past-date {
+  opacity: 0.6;
+}
+
 .homework-card .card-icon {
   background: rgba(21, 101, 192, 0.1);
 }

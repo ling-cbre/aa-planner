@@ -710,6 +710,13 @@ function getTodayWeekday() {
   return weekdays[new Date().getDay()];
 }
 
+function isPastDate(dayOfWeek, weekOffset) {
+  const weekDates = getCurrentWeekDates();
+  const choreDate = weekDates[dayOfWeek]?.iso;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  return choreDate < todayStr;
+}
+
 function getChoreGroups() {
   const groups = Object.fromEntries(WEEK_DAYS.map(day => [day, []]));
   chores.forEach(chore => {
@@ -786,6 +793,10 @@ function applyCardCompletionState(card, chore) {
 }
 
 function toggleChildCompletion(chore, childKey, card) {
+  if (isPastDate(chore.day, viewedWeekOffset)) {
+    return;
+  }
+  
   const worth = getChoreWorth(chore);
   const doneSet = getDoneSet(childKey);
 
@@ -826,6 +837,7 @@ function createChoreCard(chore) {
   const card = document.createElement('div');
   card.className = `chore-card${chore.category === 'homework' ? ' homework-card' : ''}`;
   card.dataset.choreId = chore.id;
+  const isPast = isPastDate(chore.day, viewedWeekOffset);
   card.innerHTML = `
     <span class="card-icon">${chore.icon}</span>
     <div class="card-copy">
@@ -834,13 +846,14 @@ function createChoreCard(chore) {
     </div>
     <div class="child-toggle-group">
       ${CHILDREN.map(child => `
-        <button type="button" class="child-toggle-btn${isChildDone(chore.id, child.key) ? ' active' : ''}" data-child="${child.key}">
+        <button type="button" class="child-toggle-btn${isChildDone(chore.id, child.key) ? ' active' : ''}${isPast ? ' disabled' : ''}" data-child="${child.key}"${isPast ? ' disabled' : ''}>
           <span>${child.name}</span>
         </button>
       `).join('')}
     </div>
   `;
   card.dataset.stars = String(chore.stars || 1);
+  if (isPast) card.classList.add('past-date');
   applyCardCompletionState(card, chore);
   card.querySelectorAll('.child-toggle-btn').forEach(button => {
     button.addEventListener('click', event => {
@@ -1132,6 +1145,8 @@ function createOopsiesCard(item) {
   const card = document.createElement('div');
   card.className = 'chore-card oopsies-card';
   const oopsiesId = item.id;
+  const dayFromId = oopsiesId.split('-')[0];
+  const isPast = isPastDate(dayFromId, viewedWeekOffset);
   card.innerHTML = `
     <span class="card-icon">${item.icon}</span>
     <div class="card-copy">
@@ -1140,12 +1155,13 @@ function createOopsiesCard(item) {
     </div>
     <div class="child-toggle-group">
       ${CHILDREN.map(child => `
-        <button type="button" class="child-toggle-btn${isOopsiesDone(oopsiesId, child.key) ? ' active' : ''}" data-child="${child.key}">
+        <button type="button" class="child-toggle-btn${isOopsiesDone(oopsiesId, child.key) ? ' active' : ''}${isPast ? ' disabled' : ''}" data-child="${child.key}"${isPast ? ' disabled' : ''}>
           <span>${child.name}</span>
         </button>
       `).join('')}
     </div>
   `;
+  if (isPast) card.classList.add('past-date');
   applyOopsiesCardSelectionState(card, oopsiesId);
 
   card.querySelectorAll('.child-toggle-btn').forEach(button => {
@@ -1211,6 +1227,11 @@ function buildPenalties() {
 }
 
 function applyPenalty(item, childKey = activeRewardChild) {
+  const dayFromId = item.id.split('-')[0];
+  if (isPastDate(dayFromId, viewedWeekOffset)) {
+    return;
+  }
+  
   const penaltyAmount = Math.abs(normalizePoints(item.penalty));
   activeRewardChild = childKey;
   const activeChild = CHILDREN.find(child => child.key === childKey) || CHILDREN[0];
