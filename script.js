@@ -1531,6 +1531,16 @@ document.querySelectorAll('.report-filter-btn').forEach(btn => {
 
 
 // ── Init ──────────────────────────────────────────────────────
+// Default data for initial load (Aug 3-8 star data)
+const defaultDoneByChild = {
+  "aurora": ["Sunday-homework-0", "Thursday-homework-2", "Thursday-homework-1", "Friday-homework-2", "Friday-homework-1", "Saturday-homework-2", "Saturday-homework-1"],
+  "anderson": ["Monday-homework-0", "Monday-homework-1", "Tuesday-homework-0", "Tuesday-homework-1", "Wednesday-homework-0", "Wednesday-homework-1", "Thursday-homework-0", "Thursday-homework-1", "Thursday-chores-2", "Friday-homework-0", "Friday-homework-1", "Friday-chores-2", "Saturday-homework-0", "Saturday-homework-1", "Saturday-chores-2"]
+};
+const defaultRewardsByChild = {
+  "aurora": { "spendable": 5.5, "saved": 0 },
+  "anderson": { "spendable": 15, "saved": 0 }
+};
+
 const savedRewardsByChild = JSON.parse(localStorage.getItem('choreRewardsByChild') || 'null');
 const hasPerChildRewards = !!(savedRewardsByChild && typeof savedRewardsByChild === 'object');
 childRewardState = createEmptyRewardState();
@@ -1545,7 +1555,15 @@ if (hasPerChildRewards) {
     }
   });
 } else {
-  childRewardState = createEmptyRewardState();
+  // Use default data if no saved data exists
+  CHILDREN.forEach(child => {
+    if (defaultRewardsByChild[child.key]) {
+      childRewardState[child.key] = {
+        spendable: normalizePoints(defaultRewardsByChild[child.key].spendable),
+        saved: normalizePoints(defaultRewardsByChild[child.key].saved)
+      };
+    }
+  });
 }
 syncAggregateRewardState();
 const savedDoneByChild = JSON.parse(localStorage.getItem('choreDoneByChild') || 'null');
@@ -1557,8 +1575,21 @@ if (savedDoneByChild && typeof savedDoneByChild === 'object') {
     );
   });
 } else {
-  const legacyDone = JSON.parse(localStorage.getItem('choreDone') || '[]').filter(value => typeof value === 'string');
-  doneChoreIdsByChild.aurora = new Set(legacyDone);
+  // Use default data if no saved data exists
+  CHILDREN.forEach(child => {
+    if (defaultDoneByChild[child.key]) {
+      doneChoreIdsByChild[child.key] = new Set(defaultDoneByChild[child.key]);
+    } else {
+      const legacyDone = JSON.parse(localStorage.getItem('choreDone') || '[]').filter(value => typeof value === 'string');
+      doneChoreIdsByChild[child.key] = new Set(legacyDone);
+    }
+  });
+  // Save default data to localStorage for persistence
+  const dataToSave = {};
+  CHILDREN.forEach(child => {
+    dataToSave[child.key] = Array.from(doneChoreIdsByChild[child.key]);
+  });
+  localStorage.setItem('choreDoneByChild', JSON.stringify(dataToSave));
 }
 const savedOopsiesByChild = JSON.parse(localStorage.getItem('choreOopsiesByChild') || 'null');
 doneOopsiesIdsByChild = createEmptyDoneMap();
